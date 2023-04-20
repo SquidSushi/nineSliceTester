@@ -20,6 +20,8 @@ int main() {
     SetConfigFlags(FLAG_WINDOW_RESIZABLE | FLAG_VSYNC_HINT);
     InitWindow(Game::ScreenWidth, Game::ScreenHeight, Game::PROJECT_NAME);
     SetTargetFPS(60);
+    TraceLog(LOG_WARNING,TextFormat("%i", MeasureText("Knopp",10)));
+    TraceLog(LOG_WARNING,TextFormat("%i", MeasureText("Knopp'",10)));
 
 #ifdef GAME_START_FULLSCREEN
     ToggleFullscreen();
@@ -39,13 +41,14 @@ int main() {
     float fontsize = 16;
     std::string myString = "Knopp'";
     Rectangle wobblyButtonOG = {768, 96, 48, 48};
-    Rectangle buttons[6] = {
+    Rectangle buttons[7] = {
             {96,  32,  64,      64},
             {96,  160, 32 * 18, 64},
             {},
             {96,  256, 32,      320},
             {320, 288, 64,      64},
-            {704, 256, 8 * 32,  8 * 32}
+            {704, 256, 8 * 32,  8 * 32},
+            {448, 288, 0,0}
     };
 
 
@@ -80,6 +83,8 @@ int main() {
             buttons[2].height = wobblyButtonOG.height + offisetti;
             buttons[2].x = wobblyButtonOG.x - offisetti/2.0f;
             buttons[2].y = wobblyButtonOG.y - offisetti/2.0f;
+            buttons[6].width = thickness * 2 + MeasureText(myString.c_str(),(int)fontsize);
+            buttons[6].height = thickness * 2 + fontsize;
             if (IsKeyDown(KEY_LEFT_SHIFT)) {
                 if (IsKeyDown(KEY_DOWN)) {
                     fontsize--;
@@ -102,7 +107,7 @@ int main() {
                 }
             }
             //draw Buttons
-            for (auto i = 5; i >= 0; i--) {
+            for (auto i = 6; i >= 0; i--) {
                 if (CheckCollisionPointRec(vMouse, buttons[i])) {
                     if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
                         Draw9Slice(boxPress, buttons[i], thickness, WHITE);
@@ -121,6 +126,7 @@ int main() {
             }
             DrawText(TextFormat("Border thickness: %i",(int)thickness),5,5,10,BLACK);
             DrawText(TextFormat("Font size: %i", (int)fontsize),5,5+10+2,10,BLACK);
+            DrawText(TextFormat("Mouse at X: %i Y: %i",GetMouseX(),GetMouseY()),5,5+12+12,10, BLACK);
         }
         EndTextureMode();
         //The following lines put the canvas in the middle of the window and have the negative as black

@@ -71,19 +71,20 @@ int main() {
         vMouse = calcVMouse(renderScale, renderRec);
         BeginDrawing();
         // You can draw on the screen between BeginDrawing() and EndDrawing()
-        // For the letterbox we draw on canvas instad
+        // For the letterbox we draw on canvas instead
         BeginTextureMode(canvas);
         { //Within this block is where we draw our app to the canvas.
+            DrawTexturePro(bg,Rectangle{0,0,(float)canvas.texture.width,(float)canvas.texture.height},Rectangle{0,0,(float)canvas.texture.width,(float)canvas.texture.height},{},0,WHITE);
             if (IsKeyPressed(KEY_M)){
                 SetWindowSize(Game::ScreenWidth*2,Game::ScreenHeight*2+32);
             }
             ClearBackground(WHITE);
-            float offisetti = sin(frameCounter / 50.f) * 16 + 16;
-            buttons[2].width = wobblyButtonOG.width + offisetti;
-            buttons[2].height = wobblyButtonOG.height + offisetti;
-            buttons[2].x = wobblyButtonOG.x - offisetti/2.0f;
-            buttons[2].y = wobblyButtonOG.y - offisetti/2.0f;
-            buttons[6].width = thickness * 2 + MeasureText(myString.c_str(),(int)fontsize);
+            float wobblyButtonOffset = sinf((float)frameCounter / 50.f) * 16.f + 16;
+            buttons[2].width = wobblyButtonOG.width + wobblyButtonOffset;
+            buttons[2].height = wobblyButtonOG.height + wobblyButtonOffset;
+            buttons[2].x = wobblyButtonOG.x - wobblyButtonOffset / 2.0f;
+            buttons[2].y = wobblyButtonOG.y - wobblyButtonOffset / 2.0f;
+            buttons[6].width = thickness * 2 + (float)MeasureText(myString.c_str(),(int)fontsize);
             buttons[6].height = thickness * 2 + fontsize;
             if (IsKeyDown(KEY_LEFT_SHIFT)) {
                 if (IsKeyDown(KEY_DOWN)) {
@@ -131,13 +132,13 @@ int main() {
         EndTextureMode();
         //The following lines put the canvas in the middle of the window and have the negative as black
         ClearBackground(BLACK);
-        renderScale = std::min(GetScreenHeight() /
+        renderScale = std::min((float)GetScreenHeight() /
                                (float) canvas.texture.height, //Calculates how big or small the canvas has to be rendered.
-                               GetScreenWidth() / (float) canvas.texture.width);
-        renderRec.width = canvas.texture.width * renderScale;
-        renderRec.height = canvas.texture.height * renderScale;
-        renderRec.x = (GetScreenWidth() - renderRec.width) / 2.0f;
-        renderRec.y = (GetScreenHeight() - renderRec.height) / 2.0f;
+                               (float)GetScreenWidth() / (float) canvas.texture.width);
+        renderRec.width = (float)canvas.texture.width * renderScale;
+        renderRec.height = (float)canvas.texture.height * renderScale;
+        renderRec.x = ((float)GetScreenWidth() - renderRec.width) / 2.0f;
+        renderRec.y = ((float)GetScreenHeight() - renderRec.height) / 2.0f;
         DrawTexturePro(canvas.texture, Rectangle{0, 0, (float) canvas.texture.width, (float) -canvas.texture.height},
                        renderRec,
                        {}, 0, WHITE);
@@ -156,7 +157,7 @@ int main() {
 }
 
 Vector2 calcVMouse(float scale, Rectangle canvas) {
-    Vector2 r = {(GetMouseX() - canvas.x) / scale, (GetMouseY() - canvas.y) / scale};
+    Vector2 r = {((float)GetMouseX() - canvas.x) / scale, ((float)GetMouseY() - canvas.y) / scale};
     return r;
 }
 
@@ -168,7 +169,7 @@ Vector2 calcVMouse(float scale, Rectangle canvas) {
 *********************************************/
 void Draw9Slice(Texture2D &tex, Rectangle rec, float thickness, Color tint) {
     //slice is a const that helps with readability of the function
-    const auto slice = tex.width / 3.0f;
+    const auto slice = (float)tex.width / 3.0f;
     //Stuffing
     DrawTexturePro(tex, {slice, slice, slice, slice},
                    {rec.x + thickness, rec.y + thickness, rec.width - thickness * 2, rec.height - thickness * 2}, {}, 0,
